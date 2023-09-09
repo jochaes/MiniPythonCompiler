@@ -5,21 +5,19 @@
       <list>
         <PerGrammarGenerationSettings>
           <option name="fileName" value="$PROJECT_DIR$/app/MiniPythonScanner.g4" />
-          <option name="autoGen" value="true" />
-          <option name="outputDir" value="$PROJECT_DIR$/app/src/main/java/jochaes/minipythoncompiler" />
+          <option name="outputDir" value="$PROJECT_DIR$/app/src/main/java" />
           <option name="libDir" value="" />
           <option name="encoding" value="" />
-          <option name="pkg" value="generated" />
+          <option name="pkg" value="jochaes.minipythoncompiler.generated" />
           <option name="language" value="Java" />
           <option name="generateListener" value="false" />
         </PerGrammarGenerationSettings>
         <PerGrammarGenerationSettings>
           <option name="fileName" value="$PROJECT_DIR$/app/MiniPythonParser.g4" />
-          <option name="autoGen" value="true" />
-          <option name="outputDir" value="$PROJECT_DIR$/app/src/main/java/jochaes/minipythoncompiler" />
+          <option name="outputDir" value="$PROJECT_DIR$/app/src/main/java" />
           <option name="libDir" value="" />
           <option name="encoding" value="" />
-          <option name="pkg" value="generated" />
+          <option name="pkg" value="jochaes.minipythoncompiler.generated" />
           <option name="language" value="Java" />
           <option name="generateListener" value="false" />
         </PerGrammarGenerationSettings>

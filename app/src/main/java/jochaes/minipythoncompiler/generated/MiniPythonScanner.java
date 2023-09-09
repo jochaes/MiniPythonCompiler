@@ -1,7 +1,9 @@
-// Generated from /Users/gilda/Desktop/Repositorios/MiniPythonCompiler/app/MiniPythonScanner.g4 by ANTLR 4.12.0
-package generated;
+// Generated from /Users/jochaes/Documents/Repositorios/MiniPythonCompiler/app/MiniPythonScanner.g4 by ANTLR 4.12.0
+package jochaes.minipythoncompiler.generated;
 
-    import antlr4.DenterHelper;
+    import jochaes.minipythoncompiler.antlr4.DenterHelper;
+
+
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

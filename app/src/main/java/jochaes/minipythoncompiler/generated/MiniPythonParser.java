@@ -1,5 +1,5 @@
-// Generated from /Users/gilda/Desktop/Repositorios/MiniPythonCompiler/app/MiniPythonParser.g4 by ANTLR 4.12.0
-package generated;
+// Generated from /Users/jochaes/Documents/Repositorios/MiniPythonCompiler/app/MiniPythonParser.g4 by ANTLR 4.12.0
+package jochaes.minipythoncompiler.generated;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;

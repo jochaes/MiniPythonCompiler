@@ -9,7 +9,7 @@ lexer grammar MiniPythonScanner;
 tokens {INDENT, DEDENT}
  //import com.yuvalshavit.antlr4.DenterHelper;
 @lexer::header{
-    import antlr4.DenterHelper;
+    import jochaes.minipythoncompiler.antlr4.DenterHelper;
 }
 
 @lexer::members{

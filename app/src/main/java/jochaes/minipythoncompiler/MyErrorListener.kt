@@ -6,10 +6,9 @@ import org.antlr.v4.runtime.RecognitionException
 import org.antlr.v4.runtime.Recognizer
 
 
-
 class MyErrorListener : BaseErrorListener(){
 
-    var errorMessages = ArrayList<String>()
+    private var errorMessages = ArrayList<String>()
 
     override fun syntaxError(
         recognizer: Recognizer<*, *>?,

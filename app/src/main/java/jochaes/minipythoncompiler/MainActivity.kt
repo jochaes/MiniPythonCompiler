@@ -10,6 +10,14 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
 import jochaes.minipythoncompiler.databinding.ActivityMainBinding
+import android.content.Intent
+import android.net.Uri
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStream
+import java.io.InputStreamReader
+import java.lang.StringBuilder
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,11 +25,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         setSupportActionBar(binding.toolbar)
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -31,6 +39,28 @@ class MainActivity : AppCompatActivity() {
         binding.fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
+        }
+
+        val intent: Intent? = intent
+        if( Intent.ACTION_VIEW == intent?.action && intent.data != null){
+            // Get the URI of the file
+            val fileUri: Uri? = intent.data
+
+            //Read and Process the text file data from file
+            try {
+                val inputStream: InputStream? = contentResolver.openInputStream(fileUri!!)
+                val reader =  BufferedReader( InputStreamReader(inputStream) )
+                val text = StringBuilder()
+                var line: String? = reader.readLine()
+
+                while (line != null ){
+                    text.append(line).append("\n")
+                    line = reader.readLine()
+                }
+                reader.close()
+            } catch (e: IOException){
+                e.printStackTrace()
+            }
         }
     }
 

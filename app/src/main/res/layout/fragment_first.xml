@@ -27,13 +27,22 @@
                     android:layout_weight="1"
                     android:background="@android:color/holo_blue_light">
 
-                <TextView
-                        android:id="@+id/fileTextView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="TextView 1"
+                <com.amrdeveloper.codeview.CodeView android:id="@+id/code_view"
+                                                    android:layout_width="match_parent"
+                                                    android:layout_height="match_parent"
+                                                    android:background="@color/black"
+                                                    android:dropDownWidth="150dp"
+                                                    android:dropDownHorizontalOffset="0dp"
+                                                    android:dropDownSelector="@color/black"
+                                                    android:gravity="top|start"/>
+                <!--                <TextView-->
+                <!--                        android:id="@+id/fileTextView"-->
+                <!--                        android:layout_width="match_parent"-->
+                <!--                        android:layout_height="wrap_content"-->
+                <!--                        android:text="TextView 1"-->
 
-                        android:textAppearance="@style/TextAppearance.AppCompat.Display1"/>
+                <!--                        android:textAppearance="@style/TextAppearance.AppCompat.Display1"/>-->
+
 
             </ScrollView>
             <ScrollView

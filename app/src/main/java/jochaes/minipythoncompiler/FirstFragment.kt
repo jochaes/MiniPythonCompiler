@@ -1,10 +1,12 @@
 package jochaes.minipythoncompiler
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+
 import jochaes.minipythoncompiler.databinding.FragmentFirstBinding
 import java.io.BufferedReader
 import java.io.IOException
@@ -14,10 +16,13 @@ import jochaes.minipythoncompiler.MyErrorListener
 import jochaes.minipythoncompiler.generated.MiniPythonParser
 import jochaes.minipythoncompiler.generated.MiniPythonScanner
 
+
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.RecognitionException
 import org.antlr.v4.runtime.tree.ParseTree
+
+import com.amrdeveloper.codeview.CodeView
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -44,6 +49,14 @@ class FirstFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val fileName = "toCompile.txt"
+        val codeView = getView()?.findViewById<CodeView>(R.id.code_view)
+        codeView?.setEnableLineNumber(true)
+        codeView?.setLineNumberTextColor(Color.BLUE)
+        codeView?.setLineNumberTextSize(25f)
+
+        codeView?.setEnableHighlightCurrentLine(true)
+        codeView?.setHighlightCurrentLineColor(Color.GRAY)
+
 
         try{
 
@@ -58,8 +71,8 @@ class FirstFragment : Fragment() {
             reader.close()
             inputStream?.close()
 
-            binding.fileTextView.text = stringBuilder.toString()
-
+//            binding.fileTextView.text = stringBuilder.toString()
+            codeView?.append(stringBuilder)
 
 
         } catch (e: IOException){
@@ -76,7 +89,8 @@ class FirstFragment : Fragment() {
             var errorListener: MyErrorListener?
             var tree: ParseTree? = null
 
-            val input =  CharStreams.fromString(binding.fileTextView.text.toString())
+            //val input =  CharStreams.fromStream(context?.openFileInput(fileName))
+            val input =  CharStreams.fromString(binding.codeView.text.toString())
             val lexer = MiniPythonScanner(input)
             val parser = MiniPythonParser(CommonTokenStream(lexer))
 

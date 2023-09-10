@@ -1,5 +1,6 @@
 package jochaes.minipythoncompiler
 
+import android.content.Context
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
@@ -28,20 +29,8 @@ class MainActivity : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setSupportActionBar(binding.toolbar)
-
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
-
         val intent: Intent? = intent
+        val text = StringBuilder()
         if( Intent.ACTION_VIEW == intent?.action && intent.data != null){
             // Get the URI of the file
             val fileUri: Uri? = intent.data
@@ -50,10 +39,10 @@ class MainActivity : AppCompatActivity() {
             try {
                 val inputStream: InputStream? = contentResolver.openInputStream(fileUri!!)
                 val reader =  BufferedReader( InputStreamReader(inputStream) )
-                val text = StringBuilder()
+
                 var line: String? = reader.readLine()
 
-                while (line != null ){
+                while (line != null ) {
                     text.append(line).append("\n")
                     line = reader.readLine()
                 }
@@ -61,7 +50,32 @@ class MainActivity : AppCompatActivity() {
             } catch (e: IOException){
                 e.printStackTrace()
             }
+
+            val fileName = "toCompile.txt"
+            try{
+                val outputStream = openFileOutput(fileName, Context.MODE_PRIVATE)
+                outputStream.write(text.toString().toByteArray())
+                outputStream.close()
+
+            }catch (e: IOException){
+                e.printStackTrace()
+            }
+
         }
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
+
+        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        appBarConfiguration = AppBarConfiguration(navController.graph)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+
+//        binding.fab.setOnClickListener { view ->
+//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show()
+//        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

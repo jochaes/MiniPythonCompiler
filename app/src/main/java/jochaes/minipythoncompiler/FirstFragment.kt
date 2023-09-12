@@ -2,10 +2,13 @@ package jochaes.minipythoncompiler
 
 import android.graphics.Color
 import android.os.Bundle
+import android.provider.CalendarContract.Colors
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 
 import jochaes.minipythoncompiler.databinding.FragmentFirstBinding
 import java.io.BufferedReader
@@ -27,13 +30,15 @@ import com.amrdeveloper.codeview.CodeView
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
-class FirstFragment : Fragment() {
+class FirstFragment : Fragment(){
 
     private var _binding: FragmentFirstBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private lateinit var viewModel: SharedViewModel
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +56,7 @@ class FirstFragment : Fragment() {
         val fileName = "toCompile.txt"
         val codeView = getView()?.findViewById<CodeView>(R.id.code_view)
         codeView?.setEnableLineNumber(true)
-        codeView?.setLineNumberTextColor(Color.BLUE)
+        codeView?.setLineNumberTextColor(Color.parseColor("#9D8DF1"))
         codeView?.setLineNumberTextSize(25f)
 
         codeView?.setEnableHighlightCurrentLine(true)
@@ -124,6 +129,15 @@ class FirstFragment : Fragment() {
             }
 
         }
+
+        viewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        viewModel.menuItemClicked.observe(viewLifecycleOwner, Observer {
+            clicked -> if (clicked){
+                val texto = binding.compileResponseTextView
+                texto.text = "Presione \"Compilar\" "
+                viewModel.clearMenuItemclicked()
+        }
+        })
     }
 
     override fun onDestroyView() {

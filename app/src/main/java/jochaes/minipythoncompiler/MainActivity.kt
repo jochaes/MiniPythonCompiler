@@ -13,6 +13,8 @@ import android.view.MenuItem
 import jochaes.minipythoncompiler.databinding.ActivityMainBinding
 import android.content.Intent
 import android.net.Uri
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import java.io.BufferedReader
 import java.io.IOException
 import java.io.InputStream
@@ -20,10 +22,13 @@ import java.io.InputStreamReader
 import java.lang.StringBuilder
 
 
+
 class MainActivity : AppCompatActivity() {
+
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: SharedViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -71,6 +76,13 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
+        viewModel = ViewModelProvider(this).get(SharedViewModel::class.java)
+        viewModel.menuItemClicked.observe(this, Observer {
+            clicked -> if (clicked){
+                println("Button Clicked")
+        }
+        })
+
 //        binding.fab.setOnClickListener { view ->
 //            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                    .setAction("Action", null).show()
@@ -89,7 +101,11 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_settings -> {
+                viewModel.setMenuItemClicked()
+                return true
+            }
+
             else -> super.onOptionsItemSelected(item)
         }
     }

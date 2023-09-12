@@ -83,3 +83,6 @@ NEWLINE: ('\r'? '\n' (' ' | '\t')*);
 //NEWLINE : '\n';
 WS  : [ \r\n\t]+ -> skip ;
 
+LINECOMMENT: '#' ~[\r\n]* -> skip;
+
+COMMENT: '\'\'\'' .*? '\'\'\'' -> skip;

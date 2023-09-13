@@ -113,13 +113,17 @@ class FirstFragment : Fragment(){
                 tree = parser.program()
 
                 if (!errorListener.hasErrors()){
-                    texto?.text = "Compilación Exitosa\n"
+
+                    val spannedText = Html.fromHtml("<font color='#9CEC5B'>Compilación Sin Errores</font>", Html.FROM_HTML_MODE_LEGACY)
+                    texto?.text = spannedText
                     println("Compilación Exitosa!!\n")
                 } else{
-                    texto?.text = "Compilación Fallida\n"
+                    var spannedText = Html.fromHtml("<font color='#DC0073'>Compilación Fallida</font>", Html.FROM_HTML_MODE_LEGACY)
+                    texto?.text = spannedText
+                    texto?.append("\n")
                     println("Compilación Fallida!!\n")
 
-                    val spannedText = Html.fromHtml(errorListener.toString(), Html.FROM_HTML_MODE_LEGACY)
+                    spannedText = Html.fromHtml(errorListener.toString(), Html.FROM_HTML_MODE_LEGACY)
 
                     texto?.append(spannedText)
                     println(errorListener.toString())

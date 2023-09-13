@@ -34,12 +34,12 @@ class MyErrorListener : BaseErrorListener(){
     ) {
         if(recognizer is MiniPythonParser){
            // errorMessages.add(" $red Parser Error - line $reset $line:$charPositionInLine $msg")
-            errorMessages.add(" <font color='red'>Parser Error - line $line:$charPositionInLine $msg</font>")
+            errorMessages.add(" <font color='#F5B700'>Parser Error - line $line:$charPositionInLine $msg</font>")
         }else if (recognizer is MiniPythonLexer){
             //errorMessages.add("Scanner Error - line $line:$charPositionInLine $msg")
-            errorMessages.add(" <font color='blue'>Scanner Error - line $line:$charPositionInLine $msg</font>")
+            errorMessages.add(" <font color='#00A1E4'>Scanner Error - line $line:$charPositionInLine $msg</font>")
         }else{
-            errorMessages.add("Other Error")
+            errorMessages.add(" <font color='#DC0073'>Other Error</font>")
         }
     }
 

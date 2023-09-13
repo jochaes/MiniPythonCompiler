@@ -20,7 +20,7 @@ class MyErrorListener : BaseErrorListener(){
     ) {
         if(recognizer is MiniPythonParser){
             errorMessages.add("Parser Error - line $line:$charPositionInLine $msg")
-        }else if (recognizer is MiniPythonScanner){
+        }else if (recognizer is MiniPythonLexer){
             errorMessages.add("Scanner Error - line $line:$charPositionInLine $msg")
         }else{
             errorMessages.add("Other Error")

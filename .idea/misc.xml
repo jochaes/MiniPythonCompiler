@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ANTLRGenerationPreferences">
     <option name="perGrammarGenerationSettings">
@@ -13,6 +14,15 @@
         </PerGrammarGenerationSettings>
         <PerGrammarGenerationSettings>
           <option name="fileName" value="$PROJECT_DIR$/app/MiniPythonParser.g4" />
+          <option name="outputDir" value="$PROJECT_DIR$/app/src/main/java" />
+          <option name="libDir" value="" />
+          <option name="encoding" value="" />
+          <option name="pkg" value="jochaes.minipythoncompiler.generated" />
+          <option name="language" value="Java" />
+          <option name="generateListener" value="false" />
+        </PerGrammarGenerationSettings>
+        <PerGrammarGenerationSettings>
+          <option name="fileName" value="$PROJECT_DIR$/app/MiniPython.g4" />
           <option name="outputDir" value="$PROJECT_DIR$/app/src/main/java" />
           <option name="libDir" value="" />
           <option name="encoding" value="" />

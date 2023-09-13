@@ -17,7 +17,7 @@ import java.io.InputStreamReader
 import java.lang.StringBuilder
 import jochaes.minipythoncompiler.MyErrorListener
 import jochaes.minipythoncompiler.generated.MiniPythonParser
-import jochaes.minipythoncompiler.generated.MiniPythonScanner
+import jochaes.minipythoncompiler.generated.MiniPythonLexer
 
 
 import org.antlr.v4.runtime.CharStreams
@@ -96,7 +96,7 @@ class FirstFragment : Fragment(){
 
             //val input =  CharStreams.fromStream(context?.openFileInput(fileName))
             val input =  CharStreams.fromString(binding.codeView.text.toString())
-            val lexer = MiniPythonScanner(input)
+            val lexer = MiniPythonLexer(input)
             val parser = MiniPythonParser(CommonTokenStream(lexer))
 
             errorListener = MyErrorListener()

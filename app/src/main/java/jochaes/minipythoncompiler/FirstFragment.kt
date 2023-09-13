@@ -3,6 +3,7 @@ package jochaes.minipythoncompiler
 import android.graphics.Color
 import android.os.Bundle
 import android.provider.CalendarContract.Colors
+import android.text.Html
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -118,7 +119,9 @@ class FirstFragment : Fragment(){
                     texto?.text = "Compilación Fallida\n"
                     println("Compilación Fallida!!\n")
 
-                    texto?.append(errorListener.toString())
+                    val spannedText = Html.fromHtml(errorListener.toString(), Html.FROM_HTML_MODE_LEGACY)
+
+                    texto?.append(spannedText)
                     println(errorListener.toString())
                 }
 

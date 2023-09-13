@@ -10,6 +10,20 @@ class MyErrorListener : BaseErrorListener(){
 
     private var errorMessages = ArrayList<String>()
 
+    val reset:String = "\u001B[0m"
+    val red:String = "\u001B[31m";
+    val green:String = "\u001B[32m"
+
+//    String reset = "\u001B[0m"; // Reset to default color
+//    String red = "\u001B[31m";   // Red
+//    String green = "\u001B[32m"; // Green
+//    String yellow = "\u001B[33m";// Yellow
+
+    // Print colored text
+//    System.out.println("This is " + red + "red" + reset + " text.");
+//    System.out.println("This is " + green + "green" + reset + " text.");
+//    System.out.println("This is " + yellow + "yellow" + reset + " text.");
+
     override fun syntaxError(
         recognizer: Recognizer<*, *>?,
         offendingSymbol: Any?,
@@ -19,9 +33,11 @@ class MyErrorListener : BaseErrorListener(){
         e: RecognitionException?
     ) {
         if(recognizer is MiniPythonParser){
-            errorMessages.add("Parser Error - line $line:$charPositionInLine $msg")
+           // errorMessages.add(" $red Parser Error - line $reset $line:$charPositionInLine $msg")
+            errorMessages.add(" <font color='red'>Parser Error - line $line:$charPositionInLine $msg</font>")
         }else if (recognizer is MiniPythonLexer){
-            errorMessages.add("Scanner Error - line $line:$charPositionInLine $msg")
+            //errorMessages.add("Scanner Error - line $line:$charPositionInLine $msg")
+            errorMessages.add(" <font color='blue'>Scanner Error - line $line:$charPositionInLine $msg</font>")
         }else{
             errorMessages.add("Other Error")
         }
@@ -35,8 +51,9 @@ class MyErrorListener : BaseErrorListener(){
         if( !hasErrors() ) return "0 Errors"
         val builder = StringBuilder()
         for ( error in errorMessages){
-            builder.append("$error\n")
+            builder.append("$error<br>")
         }
+
         return builder.toString()
     }
 

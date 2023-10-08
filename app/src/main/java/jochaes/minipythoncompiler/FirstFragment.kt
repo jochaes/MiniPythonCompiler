@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.amrdeveloper.codeview.CodeView
-import jochaes.minipythoncompiler.CustomExeptions.MainCompilationException
 import jochaes.minipythoncompiler.databinding.FragmentFirstBinding
 import jochaes.minipythoncompiler.generated.MiniPythonLexer
 import jochaes.minipythoncompiler.generated.MiniPythonParser
@@ -108,19 +107,7 @@ class FirstFragment : Fragment(){
                 println("Iniciando Compilación")
 
                 tree = parser.program()
-                if (errorListener.hasErrors()){
-                    var spannedText = Html.fromHtml("<font color='#DC0073'>Compilación Fallida</font>", Html.FROM_HTML_MODE_LEGACY)
-                    texto?.text = spannedText
-                    texto?.append("\n")
-                    println("Compilación Fallida!!\n")
-
-                    spannedText = Html.fromHtml(errorListener.toString(), Html.FROM_HTML_MODE_LEGACY)
-
-                    texto?.append(spannedText)
-                    println(errorListener.toString())
-                    throw MainCompilationException("Error de compilación")
-                }
-
+                
                 Checker(errorListener).visit(tree)
 
                 if (!errorListener.hasErrors()){
@@ -138,21 +125,11 @@ class FirstFragment : Fragment(){
 
                     texto?.append(spannedText)
                     println(errorListener.toString())
-                    throw MainCompilationException("Error de compilación")
                 }
-                
 
             } catch (e: RecognitionException){
                 texto?.text = "Error de Reconocimiento"
                 println("Error de Reconocimiento!!!")
-                e.printStackTrace()
-            } catch (e: MainCompilationException){
-                texto?.text = "Error de compilación"
-                println("Error de compilación!!!")
-                e.printStackTrace()
-            } catch (e: Exception){
-                texto?.text = "Error de compilación"
-                println("Error de compilación!!!")
                 e.printStackTrace()
             }
 

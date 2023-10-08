@@ -1,32 +1,26 @@
 package jochaes.minipythoncompiler
 
+
 import android.graphics.Color
 import android.os.Bundle
-import android.provider.CalendarContract.Colors
 import android.text.Html
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-
+import com.amrdeveloper.codeview.CodeView
 import jochaes.minipythoncompiler.databinding.FragmentFirstBinding
-import java.io.BufferedReader
-import java.io.IOException
-import java.io.InputStreamReader
-import java.lang.StringBuilder
-import jochaes.minipythoncompiler.MyErrorListener
-import jochaes.minipythoncompiler.generated.MiniPythonParser
 import jochaes.minipythoncompiler.generated.MiniPythonLexer
-
-
+import jochaes.minipythoncompiler.generated.MiniPythonParser
 import org.antlr.v4.runtime.CharStreams
 import org.antlr.v4.runtime.CommonTokenStream
 import org.antlr.v4.runtime.RecognitionException
 import org.antlr.v4.runtime.tree.ParseTree
-
-import com.amrdeveloper.codeview.CodeView
+import java.io.BufferedReader
+import java.io.IOException
+import java.io.InputStreamReader
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -110,7 +104,11 @@ class FirstFragment : Fragment(){
             val texto = binding.compileResponseTextView
 
             try{
+                println("Iniciando Compilación")
+
                 tree = parser.program()
+
+                Checker(errorListener).visit(tree)
 
                 if (!errorListener.hasErrors()){
 

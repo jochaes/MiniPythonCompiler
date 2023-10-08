@@ -24,6 +24,12 @@ class MyErrorListener : BaseErrorListener(){
 //    System.out.println("This is " + green + "green" + reset + " text.");
 //    System.out.println("This is " + yellow + "yellow" + reset + " text.");
 
+    fun addContextualError(msg: String){
+        errorMessages.add(" <font color='#5438DC'>Contextual Error - $msg </font>")
+    }
+
+
+
     override fun syntaxError(
         recognizer: Recognizer<*, *>?,
         offendingSymbol: Any?,

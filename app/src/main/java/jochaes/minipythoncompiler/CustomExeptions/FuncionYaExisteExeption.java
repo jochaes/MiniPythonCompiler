@@ -52,6 +52,16 @@ public class FuncionYaExisteExeption extends Exception{
                         "\n\ten Linea: " + line + " Columna: " + col;
     }
 
+    public  FuncionYaExisteExeption(MiniPythonParser.ForStatement_ASTContext ctx){
+        int line = ctx.getStart().getLine();
+        int col = ctx.getStart().getCharPositionInLine();
+
+        this.message =
+                "\nFuncionYaExisteExeption: "+
+                        "\n\tEl identificador de un for no puede ser el nombre de una función." +
+                        "\n\ten Linea: " + line + " Columna: " + col;
+    }
+
 
 
     public FuncionYaExisteExeption(String message){

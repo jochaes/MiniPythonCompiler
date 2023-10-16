@@ -52,7 +52,7 @@ ifStatement: IF (expression|comparison) COLON sequence ELSE COLON sequence      
 
 whileStatement: WHILE (expression|comparison) COLON sequence                            #whileStatement_AST;
 
-forStatement: FOR expression IN expressionList COLON sequence                           #forStatement_AST;
+forStatement: FOR IDENTIFIER IN (listExpression|IDENTIFIER)  COLON sequence             #forStatement_AST;
 
 returnStatement: RETURN (expression|comparison) NEWLINE                                 #returnStatement_AST;
 

@@ -21,6 +21,16 @@ public class VariableNoExisteException extends Exception{
                         "\n\ten Linea: " + line + " Columna: " + col;
     }
 
+    public VariableNoExisteException(MiniPythonParser.ForStatement_ASTContext ctx ){
+        int line = ctx.getStart().getLine();
+        int col = ctx.getStart().getCharPositionInLine();
+
+        this.message =
+                "\nVariableNoExisteException: "+
+                        "\n\tLa lista no existe en la tabla de variables" +
+                        "\n\ten Linea: " + line + " Columna: " + col;
+    }
+
     public VariableNoExisteException(String message){
         super(message);
     }
@@ -35,4 +45,5 @@ public class VariableNoExisteException extends Exception{
         return this.message;
     }
 }
+
 

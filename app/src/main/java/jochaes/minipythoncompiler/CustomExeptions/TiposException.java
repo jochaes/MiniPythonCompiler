@@ -70,6 +70,30 @@ public class TiposException extends Exception{
 
     }
 
+    public TiposException(int primitive1, int primitive2, MiniPythonParser.ExpressionContext ctx){
+        int line = ctx.getStart().getLine();
+        int col = ctx.getStart().getCharPositionInLine();
+
+        this.message =
+                "\nTiposException: "+
+                        "\n\tEl tipo del parametro( " + getCustomType(primitive2) + " ) es diferente al tipo del argumento( " + getCustomType(primitive1) +" ) " +
+                        "\n\ten Linea: " + line + " Columna: " + col;
+
+    }
+
+    public TiposException(MiniPythonParser.Len_PE_ASTContext ctx, int tipo ){
+        int line = ctx.getStart().getLine();
+        int col = ctx.getStart().getCharPositionInLine();
+
+
+        this.message =
+                "\nTiposException: "+
+                        "\n\tLa funcion len solo se puede utilizar con string o list no con " + getCustomType(tipo) +
+                        "\n\ten Linea: " + line + " Columna: " + col;
+    }
+
+
+
 
 
     @Override

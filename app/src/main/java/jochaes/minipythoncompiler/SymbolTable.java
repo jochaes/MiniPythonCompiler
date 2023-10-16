@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+
 public class SymbolTable {
     LinkedList<Ident> table;
 
@@ -35,13 +36,13 @@ public class SymbolTable {
     }
 
     public class MethodIdent extends Ident{
-        List<TerminalNode> params;  //Los parametros están en el ArgList
+        List<VarIdent> arguments;
         int numParams;
 
-        public MethodIdent(Token t, int tp, List<TerminalNode> p,  ParserRuleContext decl){
+        public MethodIdent(Token t, int tp, List<VarIdent> p,  ParserRuleContext decl){
             super(t,tp,decl);
             this.numParams = p.size();
-            this.params = p;
+            this.arguments = p;
         }
 
     }
@@ -51,7 +52,7 @@ public class SymbolTable {
         this.currentLevel = -1;
     }
 
-    public void insert( Token id, int type, List<TerminalNode> p, ParserRuleContext decl  ){
+    public void insert( Token id, int type, List<VarIdent> p, ParserRuleContext decl  ){
 
         //TODO No se puede insertar un elemento repetido en el mismo nivel
         Ident i = new MethodIdent(id, type, p, decl);
@@ -106,10 +107,4 @@ public class SymbolTable {
         }
         System.out.println("---- Fin Tabla ----");
     }
-
-
-
-
-
-
 }

@@ -107,7 +107,7 @@ class FirstFragment : Fragment(){
                 println("Iniciando Compilación")
 
                 tree = parser.program()
-                
+
                 Checker(errorListener).visit(tree)
 
                 if (!errorListener.hasErrors()){

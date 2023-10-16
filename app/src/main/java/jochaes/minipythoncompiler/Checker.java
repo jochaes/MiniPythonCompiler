@@ -11,6 +11,18 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/****************** TIPOS ******************
+ * -1 = Indefinido
+ *  0 = int
+ *  1 = string
+ *  2 = char
+ *  3 = list[]
+ *  4 = float
+ *  5 = Boolean
+ */
+
+
 public class Checker extends MiniPythonBaseVisitor<Object> {
 
     private SymbolTable VarTable;
@@ -28,6 +40,7 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
 
         this.errorListener = errorListener;
     }
+
 
     public SymbolTable getVarTable() {
         return VarTable;
@@ -76,6 +89,7 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
 
     @Override
     public Object visitPrint_MS_AST(MiniPythonParser.Print_MS_ASTContext ctx) {
+        //Solo Visita el Print normal, acá no hace nada
         return super.visitPrint_MS_AST(ctx);
     }
 
@@ -84,6 +98,7 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
      *************************************************************/
     @Override
     public Object visitIf_ST_AST(MiniPythonParser.If_ST_ASTContext ctx) {
+        //Solo visita al if normal, acá no hace nada
         return super.visitIf_ST_AST(ctx);
     }
 
@@ -179,21 +194,39 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
 
             //Revizar que los argumentos no existan en la tabla de variables
             // Visitamos el ArgList, que es una lista de argumentos y agregamos cada uno a la tabla de variables como tipo indefinido
-            List<TerminalNode> params = (List<TerminalNode>) visit(ctx.argList());
+            List<TerminalNode> tempArguments = (List<TerminalNode>) visit(ctx.argList());
 
             //Visitamos la secuencia de statements
             //Si este sequence tiene un return, entonces el tipo de la funcion es el tipo del return
             int funType = (int) visit(ctx.sequence());
 
+            //Una vez que hemos visitado la secuencia de statements,
+            //entonces ya tenemos los tipos de los argumentos, y el tipo de la funcion
+            // Ya que cuando se estaban asignando o utilizando las variables, se actualizó su tipo
+
+            List<SymbolTable.VarIdent> methodArguments = new ArrayList<>();
+
+            for (int i = 0; i < tempArguments.size(); i++){
+                //Buscamos el argumento en la tabla de variables
+                SymbolTable.VarIdent var = (SymbolTable.VarIdent) this.VarTable.find(tempArguments.get(i).getText());
+
+                //Si el argumento existe, entonces lo agregamos a la lista de argumentos para guaradrlo con la funcion
+                if (var != null){
+                    methodArguments.add(var);
+                }else{
+                    throw new DefinicionMetodoArgumentosException(ctx, tempArguments.get(i).getSymbol());
+                }
+            }
 
             //Agregar la funcion a la tabla de funciones
-            this.FunctionTable.insert(ctx.IDENTIFIER().getSymbol(), funType, params, ctx);
+            this.FunctionTable.insert(ctx.IDENTIFIER().getSymbol(), funType, methodArguments, ctx);
 
         }
-        catch (FuncionYaExisteExeption | VariableYaExisteException e){
+        catch (FuncionYaExisteExeption | VariableYaExisteException | DefinicionMetodoArgumentosException e){
             this.errorListener.addContextualError(e.toString());
             System.err.println(e.toString());
         }
+
 
         //Cerramos el scope
         this.VarTable.closeScope();
@@ -236,10 +269,33 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
 
     /************************************************************
      if Statement Linea 50
+     Sólo acepta comparaciones
      *************************************************************/
     @Override
     public Object visitIfStatement_AST(MiniPythonParser.IfStatement_ASTContext ctx) {
-        return super.visitIfStatement_AST(ctx);
+
+        try{
+
+            if (ctx.expression() != null){
+                throw new ExpresionException(ctx.expression());
+            }
+
+            if (ctx.comparison() != null){
+
+                visit(ctx.comparison());
+            }
+
+        }catch (ExpresionException e){
+            this.errorListener.addContextualError(e.toString());
+            System.err.println(e.toString());
+        }
+
+        //Visitar todas las secuencias de statements
+        for (int i = 0; i < ctx.sequence().size(); i++){
+            visit(ctx.sequence(i));
+        }
+
+        return null;
     }
 
     /************************************************************
@@ -247,7 +303,27 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
      *************************************************************/
     @Override
     public Object visitWhileStatement_AST(MiniPythonParser.WhileStatement_ASTContext ctx) {
-        return super.visitWhileStatement_AST(ctx);
+        try{
+
+            if (ctx.expression() != null){
+                throw new ExpresionException(ctx.expression());
+            }
+
+            if (ctx.comparison() != null){
+
+                visit(ctx.comparison());
+
+            }
+
+        }catch (ExpresionException e){
+            this.errorListener.addContextualError(e.toString());
+            System.err.println(e.toString());
+        }
+
+        visit(ctx.sequence()); //Visitamos la secuencia de statements
+
+
+        return null;
     }
 
     /************************************************************
@@ -255,7 +331,68 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
      *************************************************************/
     @Override
     public Object visitForStatement_AST(MiniPythonParser.ForStatement_ASTContext ctx) {
-        return super.visitForStatement_AST(ctx);
+        //Verificar que el identificador no esté asignado
+
+        //Solo para validar que el iterador no sea una funcion
+        try{
+            if (this.FunctionTable.find(ctx.IDENTIFIER(0).getText()) != null){
+                throw new FuncionYaExisteExeption(ctx);
+            }
+
+            if (this.VarTable.find(ctx.IDENTIFIER(0).getText()) != null){
+                throw new VariableYaExisteException(ctx);
+            }
+
+        }catch (FuncionYaExisteExeption | VariableYaExisteException e){
+            this.errorListener.addContextualError(e.toString());
+            System.err.println(e.toString());
+        }
+
+        //Agregamos el identificador a la tabla de variables
+        this.VarTable.insert(ctx.IDENTIFIER(0).getSymbol(), -1, ctx);
+
+        //Validamos si la lista es una lista o un identificador que apunta a una lista
+
+        try{
+            //Visita la lista de expresiones, para verificar que es toda del mismo tipo
+            if ( ctx.listExpression() != null){
+                visit(ctx.listExpression());
+            }
+
+            //Si es un identificador, entonces debe existir y debe ser una lista
+            if( ctx.IDENTIFIER(1) != null ){
+
+                //Si es una funcion, entonces tirar error
+                if (this.FunctionTable.find(ctx.IDENTIFIER(1).getText()) != null){
+                    throw new FuncionYaExisteExeption(ctx);
+                }
+
+                //Si es un  identificador, tiene que existir, y debe ser un alista
+                SymbolTable.VarIdent var = (SymbolTable.VarIdent) this.VarTable.find(ctx.IDENTIFIER(1).getText());
+
+                //Si la Variable no existe entonces tirar error
+                if (var == null){
+                    throw new VariableNoExisteException(ctx);
+                }
+
+                //Si la variable existe, entonces debe ser una lista
+                if (var.type != 3){
+                    throw new TiposException(3, var.type, ctx.IDENTIFIER(1).getSymbol());
+                }
+
+            }
+
+
+        }catch (VariableNoExisteException | FuncionYaExisteExeption | TiposException e){
+            this.errorListener.addContextualError(e.toString());
+            System.err.println(e.toString());
+        }
+
+        //Visitamos la secuencia de statements
+        visit(ctx.sequence());
+
+
+        return null;
     }
 
     /************************************************************
@@ -356,17 +493,30 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
             //En expresionList se visitan todas las expresiones de la lista
             List<MiniPythonParser.ExpressionContext> parametrosMetodo = (List<MiniPythonParser.ExpressionContext>) visit(ctx.expressionList());
 
-            //Visitar todas las expresiones de la lista
-            for (int i = 0; i < parametrosMetodo.size(); i++){
-                visit(parametrosMetodo.get(i));
-            }
 
-            //Todo: Aca se debe hacer la inferencia de los tipos, pero diay, no se como hacerlo XD
+            //Todo: Aca se debe hacer la inferencia de los tipos
+            // Creo que acá hay que comparar los tipos de la llamada con los tipos de la definicion
+
+            //Si la cantidad de parametros es diferente, entonces tirar error
             if ( parametrosMetodo.size() != temp.numParams ){
                 throw new DiferenteCantidadParamsException(ctx);
             }
 
-        }catch (FuncionNoExisteException | DiferenteCantidadParamsException |VariableYaExisteException e){
+            // Acá se visita cada una de las expresiones de ExpressionList, que son los parametros de la llamada
+            // Se debe inferir el tipo de cada una de las expresiones
+            // Se debe comparar el tipo de cada expresion con el tipo de cada parametro de la definicion
+            int tipoArgumento = -1;
+            int tipoParametro = -1;
+            for (int i = 0; i < parametrosMetodo.size(); i++){
+                tipoArgumento = temp.arguments.get(i).type;
+                tipoParametro = (int) visit(parametrosMetodo.get(i));
+
+                if (tipoArgumento != tipoParametro){
+                    throw new TiposException(tipoArgumento, tipoParametro, parametrosMetodo.get(i));
+                }
+            }
+
+        }catch (FuncionNoExisteException | DiferenteCantidadParamsException |VariableYaExisteException | TiposException e){
             this.errorListener.addContextualError(e.toString());
             System.err.println(e.toString());
         }
@@ -430,6 +580,12 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
                     if (tipoRetorno == 1 || tipoTemp == 1){
                         tipoRetorno = 1;
                     }
+
+                    //Si es un int, entonces la suma es un int
+                    else if (tipoRetorno == 0 || tipoTemp == 0){
+                        tipoRetorno = 0;
+                    }
+
                     //Si es un char, entonces la suma es un string
                     else if (tipoRetorno == 2 || tipoTemp == 2){
                         throw new TiposException(tipoRetorno, tipoTemp, operador);
@@ -437,10 +593,6 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
                     //Si es un float, entonces la suma es un float
                     else if (tipoRetorno == 4 || tipoTemp == 4){
                         tipoRetorno = 4;
-                    }
-                    //Si es un int, entonces la suma es un int
-                    else if (tipoRetorno == 0 || tipoTemp == 0){
-                        tipoRetorno = 0;
                     }
                     //Si es un bool, entonces la suma es un bool
                     else if (tipoRetorno == 5 || tipoTemp == 5){
@@ -637,6 +789,9 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
                 else if (tipoRetorno == 2 && tipoTemp == 2){
                     tipoRetorno = 5;
                 }
+                else if (tipoRetorno == -1 || tipoTemp == -1){ //Puede ser que no se haya definido un argumento
+                    tipoRetorno = 5;
+                }
                 //Si es cualquier otra cosa, entonces se lanza error
                 else {
                     throw new TiposException(tipoRetorno, tipoTemp, operador);
@@ -651,6 +806,9 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
                 }
                 //Los dos son char
                 else if (tipoRetorno == 2 && tipoTemp == 2){
+                    tipoRetorno = 5;
+                }
+                else if (tipoRetorno == -1 || tipoTemp == -1){ //Puede ser que no se haya definido un argumento
                     tipoRetorno = 5;
                 }
                 //Si es cualquier otra cosa, entonces se lanza error
@@ -669,6 +827,9 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
                 else if (tipoRetorno == 2 && tipoTemp == 2){
                     tipoRetorno = 5;
                 }
+                else if (tipoRetorno == -1 || tipoTemp == -1){ //Puede ser que no se haya definido un argumento
+                    tipoRetorno = 5;
+                }
                 //Si es cualquier otra cosa, entonces se lanza error
                 else {
                     throw new TiposException(tipoRetorno, tipoTemp, operador);
@@ -683,6 +844,9 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
                 }
                 //Los dos son char
                 else if (tipoRetorno == 2 && tipoTemp == 2){
+                    tipoRetorno = 5;
+                }
+                else if (tipoRetorno == -1 || tipoTemp == -1){ //Puede ser que no se haya definido un argumento
                     tipoRetorno = 5;
                 }
                 //Si es cualquier otra cosa, entonces se lanza error
@@ -701,6 +865,9 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
                 else if (tipoRetorno == 2 && tipoTemp == 2){
                     tipoRetorno = 5;
                 }
+                else if (tipoRetorno == -1 || tipoTemp == -1){ //Puede ser que no se haya definido un argumento
+                    tipoRetorno = 5;
+                }
                 //Si es cualquier otra cosa, entonces se lanza error
                 else {
                     throw new TiposException(tipoRetorno, tipoTemp, operador);
@@ -716,6 +883,9 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
                 }
                 //Los dos son char
                 else if (tipoRetorno == 2 && tipoTemp == 2){
+                    tipoRetorno = 5;
+                }
+                else if (tipoRetorno == -1 || tipoTemp == -1){ //Puede ser que no se haya definido un argumento
                     tipoRetorno = 5;
                 }
                 //Si es cualquier otra cosa, entonces se lanza error
@@ -802,6 +972,8 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
         //Acá es una variable, entonces hay que buscarla en la tabla de variables
         //Si no existe, entonces tirar error
         //Si existe, entonces retornar el tipo de la variable
+
+
 
         //Solo para validar que el identificador no sea una funcion
         try{
@@ -901,10 +1073,23 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
 
     @Override
     public Object visitLen_PE_AST(MiniPythonParser.Len_PE_ASTContext ctx) {
-        //TODO: DEBE recibir listas o strings, o identificadores que sean listas o strings
+        //DEBE recibir listas o strings, o identificadores que sean listas o strings
         //Por el momento no verifica eso solo retorna el tipo de la funcion que es entero
-        //HAY QUE MODIFICAR EL G4 PARA QUE SEA (IDENTIFICADOR| STRING | LISTEXPRESSION)
-        visit(ctx.expression());
+        //HAY QUE MODIFICAR EL G4 PARA QUE SEA
+        //O bueno no es necesario, con solo evaluar que la expresion sea un string o una lista
+
+        try{
+            int tipo = (int) visit(ctx.expression());  //Acá visitamos la expresion
+
+            if (tipo != 3 && tipo != 1 && tipo != -1){
+                throw new TiposException(ctx, tipo);
+            }
+        }catch ( TiposException e ){
+            this.errorListener.addContextualError(e.toString());
+            System.err.println(e.toString());
+        }
+
+        //Retorna que es de tipo entero
         return 0;
 
     }

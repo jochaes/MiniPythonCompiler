@@ -1,12 +1,16 @@
 package jochaes.minipythoncompiler
 
 
+import RequestHandler
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Html
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -132,6 +136,32 @@ class FirstFragment : Fragment(){
                 println("Error de Reconocimiento!!!")
                 e.printStackTrace()
             }
+
+        }
+
+        binding.runButton.setOnClickListener{
+            println("Run Button Clicked")
+
+            val consola: android.widget.TextView = binding.compileResponseTextView
+            val RH: RequestHandler = RequestHandler()
+
+            //Display alert to ask for the IP address
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("IP Address")
+            builder.setMessage("Enter the IP address of the server")
+            val input = EditText(requireContext())
+            input.inputType = InputType.TYPE_CLASS_TEXT
+
+            builder.setView(input)
+
+            builder.setPositiveButton("OK") { dialog, which ->
+
+                val ipAddress = input.text.toString()
+                RH.sendFile(ipAddress, consola, requireContext() )
+            }
+            builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
+            builder.show()
+
 
         }
 

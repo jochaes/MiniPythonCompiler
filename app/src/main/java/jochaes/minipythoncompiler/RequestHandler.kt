@@ -14,24 +14,24 @@ class RequestHandler {
 
     fun sendFile(ipAddress: String, consola: android.widget.TextView, context: Context) {
         val client = OkHttpClient()
-        val mediaType = "application/octet-stream".toMediaTypeOrNull()
-        val byteCode: Array<String> = arrayOf(
-            "0 DEF Main",
-            "1 LOAD_CONST \"Holis Mundo\"",
-            "2 LOAD_GLOBAL print",
-            "3 CALL_FUNCTION 1",
-            "4 END"
-        )
-
+//        val mediaType = "application/octet-stream".toMediaTypeOrNull()
+//        val byteCode: Array<String> = arrayOf(
+//            "0 DEF Main",
+//            "1 LOAD_CONST \"Holis Mundo\"",
+//            "2 LOAD_GLOBAL print",
+//            "3 CALL_FUNCTION 1",
+//            "4 END"
+//        )
 
         try {
             val fileName = "byteCode.txt"
-            val outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
-            for (line in byteCode) {
-                outputStream.write(line.toByteArray())
-                outputStream.write("\n".toByteArray())
-            }
-            outputStream.close()
+
+//            val outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
+//            for (line in byteCode) {
+//                outputStream.write(line.toByteArray())
+//                outputStream.write("\n".toByteArray())
+//            }
+//            outputStream.close()
 
             //Send that file through a POST request to "192.168.100.2:5146/api/upload" and print the response in the console
             val file = File(context.filesDir, fileName)

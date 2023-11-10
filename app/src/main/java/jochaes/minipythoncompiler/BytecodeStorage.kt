@@ -25,12 +25,13 @@ class BytecodeStorage {
         val fileName = "byteCode.txt"
         val outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
 
-        for (line in bytecode) {
-            outputStream.write(line.toByteArray())
+        bytecode.forEachIndexed { index, element ->
+            outputStream.write(("$index $element").toByteArray())
             outputStream.write("\n".toByteArray())
-        }
 
+        }
         outputStream.close()
+        
     }
 
     fun clearBytecode(){

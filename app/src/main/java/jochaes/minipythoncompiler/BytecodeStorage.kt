@@ -31,7 +31,7 @@ class BytecodeStorage {
 
         }
         outputStream.close()
-        
+
     }
 
     fun clearBytecode(){

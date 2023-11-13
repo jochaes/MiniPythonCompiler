@@ -32,7 +32,7 @@ public class FuncionYaExisteExeption extends Exception{
                         "\n\ten Linea: " + line + " Columna: " + col;
     }
 
-    public  FuncionYaExisteExeption(MiniPythonParser.ElementAccess_PE_ASTContext ctx){
+    public  FuncionYaExisteExeption(MiniPythonParser.ElementAccess_ASTContext ctx){
         int line = ctx.getStart().getLine();
         int col = ctx.IDENTIFIER().getSymbol().getCharPositionInLine();
 

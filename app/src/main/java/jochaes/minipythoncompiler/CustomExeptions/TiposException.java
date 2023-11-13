@@ -49,7 +49,7 @@ public class TiposException extends Exception{
                         "\n\ten Linea: " + line + " Columna: " + col;
     }
 
-    public TiposException(MiniPythonParser.ElementAccess_PE_ASTContext ctx ){
+    public TiposException(MiniPythonParser.ElementAccess_ASTContext ctx ){
         int line = ctx.getStart().getLine();
         int col = ctx.getStart().getCharPositionInLine();
 

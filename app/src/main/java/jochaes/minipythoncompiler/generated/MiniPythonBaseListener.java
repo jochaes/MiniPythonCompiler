@@ -557,6 +557,18 @@ public class MiniPythonBaseListener implements MiniPythonListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterElementAccess_AST(MiniPythonParser.ElementAccess_ASTContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitElementAccess_AST(MiniPythonParser.ElementAccess_ASTContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterListExpression_AST(MiniPythonParser.ListExpression_ASTContext ctx) { }
 	/**
 	 * {@inheritDoc}

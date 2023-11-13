@@ -7,12 +7,14 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
+import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 
 class RequestHandler {
 
     fun sendFile(ipAddress: String, consola: android.widget.TextView, context: Context) {
+        consola.text = "Enviando Bytecode a VM en $ipAddress"
         val client = OkHttpClient()
 //        val mediaType = "application/octet-stream".toMediaTypeOrNull()
 //        val byteCode: Array<String> = arrayOf(
@@ -63,11 +65,14 @@ class RequestHandler {
 
                     // Update UI on the main thread
                     withContext(Dispatchers.Main) {
-                        consola.text = responseBodyString
+                        try {
+                            val respuesta = JSONObject(responseBodyString)
+                            val resultado = respuesta.getString("result")
+                            consola.text = resultado
+                        } catch (e: Exception) {
+                            consola.text = responseBodyString
+                        }
                     }
-
-
-
                     println(responseBodyString)
                 } catch (e: IOException) {
                     e.printStackTrace()

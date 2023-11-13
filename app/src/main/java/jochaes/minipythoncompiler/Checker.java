@@ -1098,6 +1098,15 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
     public Object visitElementAccess_PE_AST(MiniPythonParser.ElementAccess_PE_ASTContext ctx) {
         //TODO: Deberia retornar el tipo del elemento de la lista, pero retorna indefinido por defecto
 
+        visit(ctx.elementAccess());
+
+        return -1;
+
+    }
+
+    public Object visitElementAccess_AST(MiniPythonParser.ElementAccess_ASTContext ctx) {
+        //TODO: Deberia retornar el tipo del elemento de la lista, pero retorna indefinido por defecto
+
 
         try{
             //Validar que el identificador no exista en la tabla de funciones
@@ -1127,9 +1136,9 @@ public class Checker extends MiniPythonBaseVisitor<Object> {
             System.err.println(e.toString());
         }
 
-
         return -1;
     }
+
 
     /************************************************************
      List Expression Linea 100

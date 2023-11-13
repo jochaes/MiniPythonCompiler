@@ -326,6 +326,13 @@ public interface MiniPythonVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitElementAccess_PE_AST(MiniPythonParser.ElementAccess_PE_ASTContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code elementAccess_AST}
+	 * labeled alternative in {@link MiniPythonParser#elementAccess}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElementAccess_AST(MiniPythonParser.ElementAccess_ASTContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code listExpression_AST}
 	 * labeled alternative in {@link MiniPythonParser#listExpression}.
 	 * @param ctx the parse tree

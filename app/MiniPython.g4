@@ -24,8 +24,6 @@ tokens {INDENT, DEDENT}
     }
 }
 
-
-
 program : (mainStatement mainStatement*|EOF)                #program_AST;                         //Un programa es 1 main statement seguido de 0 más mainStatements
 
 mainStatement:
@@ -33,6 +31,13 @@ mainStatement:
         | assignStatement                                   #assign_MS_AST
         | functionCallStatement                             #functionCall_MS_AST                           //Se agrego, se pueden hacer llamadas a funciones como main statement
         | printStatement                                    #print_MS_AST;
+//x = [1,2,3,4]
+//
+//load const 1
+//load const 2
+//load const 3
+//load const 4
+//BUILD_LIST 4
 
 statement:
           ifStatement                                       #if_ST_AST
@@ -58,7 +63,7 @@ returnStatement: RETURN (expression|comparison) NEWLINE                         
 
 printStatement: PRINT (expression|comparison) NEWLINE                                   #printStatement_AST;
 
-assignStatement: IDENTIFIER ASSIGNMENT (expression|comparison) NEWLINE                  #assignStatement_AST;
+assignStatement: (IDENTIFIER | elementAccess )  ASSIGNMENT (expression|comparison) NEWLINE                  #assignStatement_AST;
 
 //assignStatementOperator: IDENTIFIER (SUBSTRACTIONASSIGNMENTOP|ADDITIONASSIGNMENTOP) expression NEWLINE #assignStaOpe_AST; //+= o -=
 
@@ -96,8 +101,12 @@ primitiveExpression:
         | OPENPARENTHESIS expression CLOSEPARENTHESIS                       #expressioParen_PE_AST
         | listExpression                                                    #listExpression_PE_AST
         | LEN OPENPARENTHESIS expression CLOSEPARENTHESIS                   #len_PE_AST
-        | IDENTIFIER (OPENSQRBRACKET expression CLOSESQRBRACKET) (OPENSQRBRACKET expression CLOSESQRBRACKET)*   #elementAccess_PE_AST;
+        | elementAccess                                                     #elementAccess_PE_AST;
 
+//x = x[0] BINARY_SUBSCR
+//x[0] = 10 STORE_SUBSCR
+
+elementAccess : IDENTIFIER (OPENSQRBRACKET expression CLOSESQRBRACKET) (OPENSQRBRACKET expression CLOSESQRBRACKET)*   #elementAccess_AST;
 listExpression: OPENSQRBRACKET expressionList CLOSESQRBRACKET               #listExpression_AST;
 
 

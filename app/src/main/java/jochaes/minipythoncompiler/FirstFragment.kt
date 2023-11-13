@@ -91,6 +91,7 @@ class FirstFragment : Fragment(){
 
         binding.compileButton.setOnClickListener{
             var errorListener: MyErrorListener?
+            var bytecodeStorage: BytecodeStorage?
             var tree: ParseTree? = null
 
             //val input =  CharStreams.fromStream(context?.openFileInput(fileName))
@@ -98,6 +99,7 @@ class FirstFragment : Fragment(){
             val lexer = MiniPythonLexer(input)
             val parser = MiniPythonParser(CommonTokenStream(lexer))
 
+            bytecodeStorage = BytecodeStorage()
             errorListener = MyErrorListener()
             lexer.removeErrorListeners()
             lexer.addErrorListener(errorListener)
@@ -111,8 +113,8 @@ class FirstFragment : Fragment(){
                 println("Iniciando Compilación")
 
                 tree = parser.program()
-
                 Checker(errorListener).visit(tree)
+                var error = false
 
                 if (!errorListener.hasErrors()){
 
@@ -129,10 +131,26 @@ class FirstFragment : Fragment(){
 
                     texto?.append(spannedText)
                     println(errorListener.toString())
+                    ///throw RecognitionException(null, null, null)
+                    error = true
+                }
+                if (error){
+                    GeneradorBytecode(bytecodeStorage).visit(tree)
+                    bytecodeStorage.writeBytecodeToFile(requireContext())
+                    var spannedText = Html.fromHtml("<font color='#DC0073'>Bytecode Generado</font>", Html.FROM_HTML_MODE_LEGACY)
+                    texto?.text = spannedText
+                    texto?.append("\n")
+                    spannedText = Html.fromHtml(bytecodeStorage.toString(), Html.FROM_HTML_MODE_LEGACY)
+                    texto?.append(spannedText)
+
+                    bytecodeStorage.printBytecode()
                 }
 
+
+
+
             } catch (e: RecognitionException){
-                texto?.text = "Error de Reconocimiento"
+                //texto?.text = "Error de Reconocimiento"
                 println("Error de Reconocimiento!!!")
                 e.printStackTrace()
             }
@@ -159,6 +177,7 @@ class FirstFragment : Fragment(){
                 val ipAddress = input.text.toString()
                 RH.sendFile(ipAddress, consola, requireContext() )
             }
+
             builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
             builder.show()
 

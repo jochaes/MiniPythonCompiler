@@ -134,6 +134,7 @@ class FirstFragment : Fragment(){
                     ///throw RecognitionException(null, null, null)
                     error = true
                 }
+
                 if (error){
                     GeneradorBytecode(bytecodeStorage).visit(tree)
                     bytecodeStorage.writeBytecodeToFile(requireContext())
